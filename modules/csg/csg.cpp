@@ -42,7 +42,7 @@ inline static bool is_snapable(const Vector3 &p_point1, const Vector3 &p_point2,
 
 inline static Vector2 interpolate_segment_uv(const Vector2 p_segement_points[2], const Vector2 p_uvs[2], const Vector2 &p_interpolation_point) {
 	float segment_length = (p_segement_points[1] - p_segement_points[0]).length();
-	if (segment_length < CMP_EPSILON) {
+	if (p_segement_points[0].is_equal_approx(p_segement_points[1])) {
 		return p_uvs[0];
 	}
 
@@ -53,13 +53,13 @@ inline static Vector2 interpolate_segment_uv(const Vector2 p_segement_points[2],
 }
 
 inline static Vector2 interpolate_triangle_uv(const Vector2 p_vertices[3], const Vector2 p_uvs[3], const Vector2 &p_interpolation_point) {
-	if (p_interpolation_point.distance_squared_to(p_vertices[0]) < CMP_EPSILON2) {
+	if (p_interpolation_point.is_equal_approx(p_vertices[0])) {
 		return p_uvs[0];
 	}
-	if (p_interpolation_point.distance_squared_to(p_vertices[1]) < CMP_EPSILON2) {
+	if (p_interpolation_point.is_equal_approx(p_vertices[1])) {
 		return p_uvs[1];
 	}
-	if (p_interpolation_point.distance_squared_to(p_vertices[2]) < CMP_EPSILON2) {
+	if (p_interpolation_point.is_equal_approx(p_vertices[2])) {
 		return p_uvs[2];
 	}
 
@@ -265,7 +265,7 @@ void CSGBrush::build_from_faces(const Vector<Vector3> &p_vertices, const Vector<
 	_regen_face_aabbs();
 }
 
-void CSGBrush::copy_from(const CSGBrush &p_brush, const Transform &p_xform) {
+void CSGBrush::copy_from(const CSGBrush &p_brush, const Transform3D &p_xform) {
 	faces = p_brush.faces;
 	materials = p_brush.materials;
 
@@ -589,7 +589,7 @@ bool CSGBrushOperation::MeshMerge::_bvh_inside(FaceBVH *facebvhptr, int p_max_de
 							Vector3 intersection_point;
 
 							// Check if faces are co-planar.
-							if ((current_normal - face_normal).length_squared() < CMP_EPSILON2 &&
+							if (current_normal.is_equal_approx(face_normal) &&
 									is_point_in_triangle(face_center, current_points)) {
 								// Only add an intersection if not a B face.
 								if (!face.from_b) {
@@ -931,7 +931,7 @@ void CSGBrushOperation::Build2DFaces::_merge_faces(const Vector<int> &p_segment_
 
 		// Delete the old faces in reverse index order.
 		merge_faces_idx.sort();
-		merge_faces_idx.invert();
+		merge_faces_idx.reverse();
 		for (int i = 0; i < merge_faces_idx.size(); ++i) {
 			faces.remove(merge_faces_idx[i]);
 		}
@@ -970,7 +970,7 @@ void CSGBrushOperation::Build2DFaces::_merge_faces(const Vector<int> &p_segment_
 					continue;
 				}
 
-				// Check if point is on an each edge.
+				// Check if point is on each edge.
 				for (int face_edge_idx = 0; face_edge_idx < 3; ++face_edge_idx) {
 					Vector2 edge_points[2] = {
 						face_points[face_edge_idx],
@@ -1076,7 +1076,7 @@ void CSGBrushOperation::Build2DFaces::_find_edge_intersections(const Vector2 p_s
 					break;
 				}
 
-				// If opposite point is on the segemnt, add its index to segment indices too.
+				// If opposite point is on the segment, add its index to segment indices too.
 				Vector2 closest_point = Geometry2D::get_closest_point_to_segment(vertices[opposite_vertex_idx].point, p_segment_points);
 				if ((closest_point - vertices[opposite_vertex_idx].point).length_squared() < vertex_snap2) {
 					_add_vertex_idx_sorted(r_segment_indices, opposite_vertex_idx);
@@ -1137,7 +1137,7 @@ int CSGBrushOperation::Build2DFaces::_insert_point(const Vector2 &p_point) {
 			}
 		}
 
-		// Check if point is on an each edge.
+		// Check if point is on each edge.
 		bool on_edge = false;
 		for (int face_edge_idx = 0; face_edge_idx < 3; ++face_edge_idx) {
 			Vector2 edge_points[2] = {
@@ -1400,7 +1400,7 @@ void CSGBrushOperation::update_faces(const CSGBrush &p_brush_a, const int p_face
 			under_count++;
 		}
 	}
-	// If all points under or over the plane, there is no intesection.
+	// If all points under or over the plane, there is no intersection.
 	if (over_count == 3 || under_count == 3) {
 		return;
 	}
@@ -1421,7 +1421,7 @@ void CSGBrushOperation::update_faces(const CSGBrush &p_brush_a, const int p_face
 			under_count++;
 		}
 	}
-	// If all points under or over the plane, there is no intesection.
+	// If all points under or over the plane, there is no intersection.
 	if (over_count == 3 || under_count == 3) {
 		return;
 	}

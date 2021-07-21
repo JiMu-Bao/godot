@@ -28,6 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                */
 /*************************************************************************/
 
+#ifdef TOOLS_ENABLED
+
 #ifndef TEST_TEXT_SERVER_H
 #define TEST_TEXT_SERVER_H
 
@@ -53,7 +55,7 @@ TEST_SUITE("[[TextServer]") {
 			for (int i = 0; i < TextServerManager::get_interface_count(); i++) {
 				TextServer *ts = TextServerManager::initialize(i, err);
 
-				RID font = ts->create_font_memory(_font_NotoSansUI_Regular, _font_NotoSansUI_Regular_size, "ttf");
+				RID font = ts->create_font_memory(_font_NotoSans_Regular, _font_NotoSans_Regular_size, "ttf");
 				TEST_FAIL_COND(font == RID(), "Loading font failed.");
 				ts->free(font);
 			}
@@ -64,7 +66,7 @@ TEST_SUITE("[[TextServer]") {
 				TextServer *ts = TextServerManager::initialize(i, err);
 
 				Vector<RID> font;
-				font.push_back(ts->create_font_memory(_font_NotoSansUI_Regular, _font_NotoSansUI_Regular_size, "ttf"));
+				font.push_back(ts->create_font_memory(_font_NotoSans_Regular, _font_NotoSans_Regular_size, "ttf"));
 				font.push_back(ts->create_font_memory(_font_NotoSansThaiUI_Regular, _font_NotoSansThaiUI_Regular_size, "ttf"));
 
 				String test = U"คนอ้วน khon uan ראה";
@@ -110,7 +112,7 @@ TEST_SUITE("[[TextServer]") {
 				}
 
 				Vector<RID> font;
-				font.push_back(ts->create_font_memory(_font_NotoSansUI_Regular, _font_NotoSansUI_Regular_size, "ttf"));
+				font.push_back(ts->create_font_memory(_font_NotoSans_Regular, _font_NotoSans_Regular_size, "ttf"));
 				font.push_back(ts->create_font_memory(_font_NotoNaskhArabicUI_Regular, _font_NotoNaskhArabicUI_Regular_size, "ttf"));
 
 				String test = U"Arabic (اَلْعَرَبِيَّةُ, al-ʿarabiyyah)";
@@ -154,7 +156,7 @@ TEST_SUITE("[[TextServer]") {
 				//                   5^  10^
 
 				Vector<RID> font;
-				font.push_back(ts->create_font_memory(_font_NotoSansUI_Regular, _font_NotoSansUI_Regular_size, "ttf"));
+				font.push_back(ts->create_font_memory(_font_NotoSans_Regular, _font_NotoSans_Regular_size, "ttf"));
 				font.push_back(ts->create_font_memory(_font_NotoSansThaiUI_Regular, _font_NotoSansThaiUI_Regular_size, "ttf"));
 
 				RID ctx = ts->create_shaped_text();
@@ -184,7 +186,7 @@ TEST_SUITE("[[TextServer]") {
 				TextServer *ts = TextServerManager::initialize(i, err);
 
 				Vector<RID> font;
-				font.push_back(ts->create_font_memory(_font_NotoSansUI_Regular, _font_NotoSansUI_Regular_size, "ttf"));
+				font.push_back(ts->create_font_memory(_font_NotoSans_Regular, _font_NotoSans_Regular_size, "ttf"));
 				font.push_back(ts->create_font_memory(_font_NotoNaskhArabicUI_Regular, _font_NotoNaskhArabicUI_Regular_size, "ttf"));
 
 				String test_1 = U"الحمد";
@@ -247,3 +249,4 @@ TEST_SUITE("[[TextServer]") {
 }; // namespace TestTextServer
 
 #endif // TEST_TEXT_SERVER_H
+#endif // TOOLS_ENABLED
